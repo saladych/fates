@@ -1,0 +1,83 @@
+[project]
+name = "fates"
+version = "0.1.0"
+description = "A generic Result[T, E] type for explicit error propagation."
+readme = "README.md"
+authors = [{ name = "Evgeny Goryachev", email = "goryachof@gmail.com" }]
+requires-python = ">=3.7"
+dependencies = ["typing_extensions>=4.0.0; python_version < '3.12'"]
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["COM812"]
+external = ["WPS"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/test_*.py" = ["S101", "D", "PLR2004"]
+
+[tool.ty.rules]
+all = "error"
+
+[tool.mypy]
+strict = true
+packages = ["fates", "tests"]
+
+[tool.pytest.ini_options]
+
+asyncio_mode = "auto"
+addopts = [
+    "--cov=fates",
+    "--cov-report=html",
+    "--cov-report=term",
+    "--xdoc",
+    "--xdoc-global-exec=from fates import Ok, Err, Result",
+]
+
+[tool.coverage.report]
+exclude_also = ["\\A(?s:.*# pragma: exclude file.*)\\Z"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.flake8]
+select = ["WPS"]
+ignore = ["WPS214"]
+allowed-domain-names = ["result"]
+
+[tool.pyrefly]
+project-includes = ["src/fates"]
+
+[tool.taskipy.tasks]
+check = "mypy && ty check && flake8 src && pytest"
+cov = "pytest && python -c 'import webbrowser; webbrowser.open(\"htmlcov/index.html\")'"
+
+[dependency-groups]
+dev = [
+    "flake8-pyproject>=1.2.4",
+    "mypy>=2.1.0",
+    "pyrefly>=0.14.0",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.15",
+    "taskipy>=1.14.1",
+    "ty>=0.0.40",
+    "wemake-python-styleguide>=1.6.2",
+    "xdoctest>=1.1.6",
+]
+docs = [
+    "furo>=2025.12.19",
+    "myst-parser>=5.1.0",
+    "sphinx>=9.1.0",
+    "sphinx-autobuild>=2025.8.25",
+    "sphinx-autodoc-typehints>=3.10.5",
+    "sphinx-autodoc2>=0.5.0",
+]
+
+[tool.uv.dependency-groups]
+docs = { requires-python = ">=3.12" }
+dev = { requires-python = ">=3.12" }
